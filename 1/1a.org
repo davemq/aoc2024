@@ -1,4 +1,13 @@
 * 1A
+
+** Require seq
+
+seq is required for doing the distance calculations across the two lists.
+
+#+begin_src emacs-lisp :tangle yes :comments both
+(require 'seq)
+#+end_src
+
 ** Local variables
 
 Set left and right to nil.
@@ -39,15 +48,26 @@ Loop over lines
 
 Use sort
 
+#+begin_src emacs-lisp :tangle yes :comments both
+  (setq left (sort left))
+  (setq right (sort right))
+#+end_src
+
 ** Compute distances and sum
 
 Use
-- seq-mapn with -
-- seq-mapn with abs
+- seq-mapn with lambda of abs of the difference
+- seq-reduce with +
 
-Maybe write a function or lambda to do both?
+Need to require seq (above).
 
-Need to require seq.
+#+begin_src emacs-lisp :tangle yes :comments both
+  (print (seq-reduce #'+ (seq-mapn (lambda (i j) 
+				     "Return distance between two integers."
+				     (abs (- i j))
+				     )
+				   left right) 0))
+#+end_src
 
 ** End
 #+begin_src emacs-lisp :tangle yes :comments both
