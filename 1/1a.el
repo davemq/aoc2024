@@ -1,11 +1,10 @@
-(let*
+(let
     (
      left
      right
-     (buffer (find-file "input.txt"))
-     (lines (string-lines (buffer-string)))
      )
-  (dolist (l lines)
+  (find-file "input.txt")
+  (dolist (l (string-lines (buffer-string)))
     (let (
 	  (values (split-string l))
 	  )
