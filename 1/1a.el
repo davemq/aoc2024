@@ -3,8 +3,7 @@
      left
      right
      (buffer (find-file "input.txt"))
-     (str (buffer-string))
-     (lines (string-lines str))
+     (lines (string-lines (buffer-string)))
      )
   (dolist (l lines)
     (let (
