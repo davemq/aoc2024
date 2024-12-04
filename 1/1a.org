@@ -33,10 +33,21 @@ Loop over lines
       (setq right (append right (list (string-to-number (nth 1 values)))))
       )
     )
-    ;;; sort left and right numerically
-  )
 #+end_src
 
 ** Sort lists
 
+Use sort
+
 ** Compute distances and sum
+
+Use
+- seq-mapn with -
+- seq-mapn with abs
+
+Maybe write a function or lambda to do both?
+
+** End
+#+begin_src emacs-lisp :tangle yes :comments both
+  )
+#+end_src
