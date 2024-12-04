@@ -47,6 +47,8 @@ Use
 
 Maybe write a function or lambda to do both?
 
+Need to require seq.
+
 ** End
 #+begin_src emacs-lisp :tangle yes :comments both
   )
