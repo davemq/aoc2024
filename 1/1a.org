@@ -39,4 +39,4 @@ Loop over lines
 
 ** Sort lists
 
-** Compute and sum distances
+** Compute distances and sum
