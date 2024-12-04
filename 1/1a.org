@@ -1,0 +1,42 @@
+* 1A
+** Local variables
+
+Set left and right to nil.
+
+#+begin_src emacs-lisp :tangle yes :comments both
+(let
+    (
+     left
+     right
+     )
+#+end_src
+
+** Read file into buffer
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (find-file "input.txt")
+#+end_src
+
+** Loop over lines
+
+Loop over lines
+- split lines
+- append 0th value to left
+- append 1st value to right
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (dolist (l (string-lines (buffer-string)))
+    (let (
+	  (values (split-string l))
+	  )
+      (setq left (append left (list (string-to-number (nth 0 values)))))
+      (setq right (append right (list (string-to-number (nth 1 values)))))
+      )
+    )
+    ;;; sort left and right numerically
+  )
+#+end_src
+
+** Sort lists
+
+** Compute and sum distances
