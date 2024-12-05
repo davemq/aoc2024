@@ -100,7 +100,7 @@ appears in the right list.
   (1a)
 #+end_src
 
-For each element of left, multiply by the result of seq-count using (- element)
+For each element of left, multiply by the result of seq-count using (= element)
 as the predicate.
 
 #+begin_src emacs-lisp :tangle yes :comments both
