@@ -10,64 +10,49 @@ counts as safe if both of the following are true:
 
 ** Define safe function
 
-Figure out direction, i.e. increasing or decreasing. If the first two
-elements are equal, return nil.
+Constraints:
+- length of list is greater than 2
+- first two elements must not be equal
+- the list is all ascending or all descending
+- adjacent levels differ by 1, 2 or 3
+
+Here's the safe function so far.
 
 #+begin_src emacs-lisp :tangle yes :comments both
-  (defun safe (l)
-    (if (< 2 (safe-length l))
-	(setq result nil)
-      (let
-	  (
-	   (first (car l))
-	   (second (cadr l))
-	   )
-
-	(if (= first second)
-	    (setq result nil)
-	  (progn
-	    (setq direction (cond ((< second first) #'>)
-				  ((> second first) #'<)
-				  )
-		  )
-	    (setq result t)
-	    )
-	  )
-	)
-      )
-#+end_src
-
-Determine that steps are
-- the same direction as the first step
-- within 1-3 values of previous
-
-#+begin_src emacs-lisp :tangle yes :comments both
-  (setq i 2)
-  (setq prev second)
-  (while (and 
-	  result 
-	  (< i (length l))
-	  )
-    (let ((next (nth l i)))
-      (if (not 
-	   (and
-	    (funcall direction next prev)
-	    (> 0 (abs (- next prev)))
-	    (< 4 (abs (- next prev)))
-	    )
-	   )
-	  (setq result nil)
-	)
-      )
+(defun safe (l)
+  (and
+   (length> l 1)
+   (/= (car l) (cadr l))
+   (or
+    (ascending l)
+    (descending l)
     )
-#+end_src
-
-Return result
-
-#+begin_src emacs-lisp :tangle yes :comments both
-  result
+   )
   )
 #+end_src
+
+*** ascending function
+
+Quite simple use of apply with #'>.
+
+#+begin_src emacs-lisp :tangle yes :comments both
+(defun ascending (l)
+  (apply #'> l))
+#+end_src
+
+*** descending function
+
+Apply with #'<.
+
+#+begin_src emacs-lisp :tangle yes :comments both
+(defun descending (l)
+  (apply #'< l))
+#+end_src
+
+*** Check distance function
+
+This needs to walk through the list, checking whether distances
+between items is 1 <= distance <= 3.
 
 ** 2A
 
