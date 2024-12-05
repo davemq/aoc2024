@@ -8,22 +8,24 @@ seq is required for doing the distance calculations across the two lists.
   (require 'seq)
 #+end_src
 
+** Define globals
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (defvar left nil)
+  (defvar right nil)
+#+end_src
+
 ** Define 1a function
 
 #+begin_src emacs-lisp :tangle yes :comments both
   (defun 1a ()
 #+end_src
 
-** Local variables
-
-Set left and right to nil.
+** Reset left and right
 
 #+begin_src emacs-lisp :tangle yes :comments both
-  (let
-      (
-       left
-       right
-       )
+  (setq left nil)
+  (setq right nil)
 #+end_src
 
 ** Read file into buffer
@@ -42,8 +44,8 @@ Loop over lines
 #+begin_src emacs-lisp :tangle yes :comments both
   (dolist (l (string-lines (buffer-string)))
     (let (
-	      (values (split-string l))
-	      )
+		(values (split-string l))
+		)
       (setq left (append left (list (string-to-number (nth 0 values)))))
       (setq right (append right (list (string-to-number (nth 1 values)))))
       )
@@ -69,14 +71,46 @@ Need to require seq (above).
 
 #+begin_src emacs-lisp :tangle yes :comments both
   (seq-reduce #'+ (seq-mapn (lambda (i j) 
-				  "Return distance between two integers."
-				  (abs (- i j))
-				  )
-				left right) 0)
+				    "Return distance between two integers."
+				    (abs (- i j))
+				    )
+				  left right) 0)
 #+end_src
 
 ** End
 #+begin_src emacs-lisp :tangle yes :comments both
-   )
+  )
+#+end_src
+
+* 1B
+
+Calculate a total similarity score by adding up each number in the
+left list after multiplying it by the number of times that number
+appears in the right list.
+
+** Define function 1b
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (defun 1b ()
+#+end_src
+
+** Call 1a to compute left and right lists
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (1a)
+#+end_src
+
+For each element of left, multiply by the result of seq-count using (- element)
+as the predicate.
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (seq-reduce #'+ 
+  	    (mapcar (lambda (x) (* x (seq-count (lambda (elt) (= elt x)) right))) left)
+  	    0)
+#+end_src
+
+** End function 1b
+
+#+begin_src emacs-lisp :tangle yes :comments both
   )
 #+end_src
