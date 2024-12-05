@@ -1,0 +1,85 @@
+* 2A
+
+The engineers are trying to figure out which reports are safe. The
+Red-Nosed reactor safety systems can only tolerate levels that are
+either gradually increasing or gradually decreasing. So, a report only
+counts as safe if both of the following are true:
+
+- The levels are either all increasing or all decreasing.
+- Any two adjacent levels differ by at least one and at most three.
+
+** Define safe function
+
+Figure out direction, i.e. increasing or decreasing. If the first two
+elements are equal, return nil.
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (defun safe (l)
+    (if (< 2 (safe-length l))
+	(setq result nil)
+      (let
+	  (
+	   (first (car l))
+	   (second (cadr l))
+	   )
+
+	(if (= first second)
+	    (setq result nil)
+	  (progn
+	    (setq direction (cond ((< second first) #'>)
+				  ((> second first) #'<)
+				  )
+		  )
+	    (setq result t)
+	    )
+	  )
+	)
+      )
+#+end_src
+
+Determine that steps are
+- the same direction as the first step
+- within 1-3 values of previous
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (setq i 2)
+  (setq prev second)
+  (while (and 
+	  result 
+	  (< i (length l))
+	  )
+    (let ((next (nth l i)))
+      (if (not 
+	   (and
+	    (funcall direction next prev)
+	    (> 0 (abs (- next prev)))
+	    (< 4 (abs (- next prev)))
+	    )
+	   )
+	  (setq result nil)
+	)
+      )
+    )
+#+end_src
+
+Return result
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  result
+  )
+#+end_src
+
+** 2A
+
+Read file into buffer
+
+#+begin_src emacs-lisp  :tangle yes :comments both
+  (defun 2a ()
+    (find-file "input.txt")
+#+end_src
+
+- Get the lines
+- For each line, split into a list of strings
+  - For each string, convert to a number
+
+Need to do something with dolist and mapcar #'string-to-numbers.
