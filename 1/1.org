@@ -5,7 +5,13 @@
 seq is required for doing the distance calculations across the two lists.
 
 #+begin_src emacs-lisp :tangle yes :comments both
-(require 'seq)
+  (require 'seq)
+#+end_src
+
+** Define 1a function
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (defun 1a ()
 #+end_src
 
 ** Local variables
@@ -13,11 +19,11 @@ seq is required for doing the distance calculations across the two lists.
 Set left and right to nil.
 
 #+begin_src emacs-lisp :tangle yes :comments both
-(let
-    (
-     left
-     right
-     )
+  (let
+      (
+       left
+       right
+       )
 #+end_src
 
 ** Read file into buffer
@@ -36,8 +42,8 @@ Loop over lines
 #+begin_src emacs-lisp :tangle yes :comments both
   (dolist (l (string-lines (buffer-string)))
     (let (
-	  (values (split-string l))
-	  )
+	      (values (split-string l))
+	      )
       (setq left (append left (list (string-to-number (nth 0 values)))))
       (setq right (append right (list (string-to-number (nth 1 values)))))
       )
@@ -62,14 +68,15 @@ Use
 Need to require seq (above).
 
 #+begin_src emacs-lisp :tangle yes :comments both
-  (print (seq-reduce #'+ (seq-mapn (lambda (i j) 
-				     "Return distance between two integers."
-				     (abs (- i j))
-				     )
-				   left right) 0))
+  (seq-reduce #'+ (seq-mapn (lambda (i j) 
+				  "Return distance between two integers."
+				  (abs (- i j))
+				  )
+				left right) 0)
 #+end_src
 
 ** End
 #+begin_src emacs-lisp :tangle yes :comments both
+   )
   )
 #+end_src
