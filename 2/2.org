@@ -8,6 +8,14 @@ counts as safe if both of the following are true:
 - The levels are either all increasing or all decreasing.
 - Any two adjacent levels differ by at least one and at most three.
 
+** Requires
+
+Require seq.
+
+#+begin_src emacs-lisp :tangle yes :comments both
+(require 'seq)
+#+end_src
+
 ** Define safe function
 
 Constraints:
@@ -16,11 +24,20 @@ Constraints:
 - the list is all ascending or all descending
 - adjacent levels differ by 1, 2 or 3
 
-Here's the safe function so far.
+Here's the safe function.
 
 #+begin_src emacs-lisp :tangle yes :comments both
-  ;; (defun 2a ()
-  ;;   (find-file "input.txt")
+(defun safe (l)
+  (and
+   (length> l 1)
+   (/= (car l) (cadr l))
+   (or
+    (ascending l)
+    (descending l)
+    )
+   (safe-distance l)
+   )
+  )
 #+end_src
 
 *** ascending function
@@ -72,6 +89,13 @@ like
     )
 #+end_src
 
+** Convert list of string to list of numbers
+
+#+begin_src emacs-lisp  :tangle yes :comments both
+(defun s2n (l)
+  (mapcar #'string-to-number l))
+#+end_src
+
 ** 2A
 
 Read file into buffer
@@ -98,6 +122,18 @@ Need to do something with dolist and mapcar #'string-to-numbers.
 
 #+begin_src emacs-lisp  :tangle yes :comments both
   (setq lists (mapcar #'split-string lines))
+#+end_src
+
+*** Convert strings to numbers
+
+#+begin_src emacs-lisp  :tangle yes :comments both
+(setq lists (mapcar #'s2n lists))
+#+end_src
+
+*** How many reports are safe?
+
+#+begin_src emacs-lisp  :tangle yes :comments both
+(seq-count #'safe lists)
 #+end_src
 
 *** End of 2A
