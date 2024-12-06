@@ -84,5 +84,6 @@ Read file into buffer
 - Get the lines
 - For each line, split into a list of strings
   - For each string, convert to a number
+  - Test to see if list is safe
 
 Need to do something with dolist and mapcar #'string-to-numbers.
