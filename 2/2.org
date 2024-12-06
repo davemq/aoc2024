@@ -77,8 +77,8 @@ like
 Read file into buffer
 
 #+begin_src emacs-lisp  :tangle yes :comments both
-  ;; (defun 2a ()
-  ;;   (find-file "input.txt")
+  (defun 2a ()
+    (find-file "input.txt")
 #+end_src
 
 - Get the lines
@@ -87,3 +87,21 @@ Read file into buffer
   - Test to see if list is safe
 
 Need to do something with dolist and mapcar #'string-to-numbers.
+
+*** Get lines
+
+#+begin_src emacs-lisp  :tangle yes :comments both
+  (setq lines (string-lines (buffer-string)))
+#+end_src
+
+*** Split each line into lists of strings
+
+#+begin_src emacs-lisp  :tangle yes :comments both
+  (setq lists (mapcar #'split-string lines))
+#+end_src
+
+*** End of 2A
+
+#+begin_src emacs-lisp  :tangle yes :comments both
+  )
+#+end_src
