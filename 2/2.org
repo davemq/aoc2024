@@ -54,6 +54,30 @@ Apply with #'<.
 This needs to walk through the list, checking whether distances
 between items is 1 <= distance <= 3.
 
+Distance function is something like
+
+#+begin_src emacs-lisp :tangle yes :comments both
+(defun distance (i j)
+  (abs (- i j)))
+#+end_src
+
+Checking distance will be with a while loop, from element at index 1
+(list element indices start at 0) to the last element, with something
+like
+
+#+begin_src emacs-lisp :tangle yes :comments both
+(setq idx 1)
+(setq len (length l))
+(setq ok t)
+(while (and ok (< i len))
+  (let ((d (distance (nth i l) (nth (- i 1) l))))
+    (setq ok (and (> d 0) (< d 4)))
+    (setq i (1+ i))
+    )
+  )
+ok
+#+end_src
+
 ** 2A
 
 Read file into buffer
