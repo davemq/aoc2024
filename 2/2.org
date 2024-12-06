@@ -19,34 +19,26 @@ Constraints:
 Here's the safe function so far.
 
 #+begin_src emacs-lisp :tangle yes :comments both
-(defun safe (l)
-  (and
-   (length> l 1)
-   (/= (car l) (cadr l))
-   (or
-    (ascending l)
-    (descending l)
-    )
-   )
-  )
+  ;; (defun 2a ()
+  ;;   (find-file "input.txt")
 #+end_src
 
 *** ascending function
 
-Quite simple use of apply with #'>.
+Quite simple use of apply with #'<.
 
 #+begin_src emacs-lisp :tangle yes :comments both
-(defun ascending (l)
-  (apply #'> l))
+  (defun ascending (l)
+    (apply #'< l))
 #+end_src
 
 *** descending function
 
-Apply with #'<.
+Apply with #'>.
 
 #+begin_src emacs-lisp :tangle yes :comments both
-(defun descending (l)
-  (apply #'< l))
+  (defun descending (l)
+    (apply #'> l))
 #+end_src
 
 *** Check distance function
@@ -57,8 +49,8 @@ between items is 1 <= distance <= 3.
 Distance function is something like
 
 #+begin_src emacs-lisp :tangle yes :comments both
-(defun distance (i j)
-  (abs (- i j)))
+  (defun distance (i j)
+    (abs (- i j)))
 #+end_src
 
 Checking distance will be with a while loop, from element at index 1
@@ -66,16 +58,18 @@ Checking distance will be with a while loop, from element at index 1
 like
 
 #+begin_src emacs-lisp :tangle yes :comments both
-(setq idx 1)
-(setq len (length l))
-(setq ok t)
-(while (and ok (< i len))
-  (let ((d (distance (nth i l) (nth (- i 1) l))))
-    (setq ok (and (> d 0) (< d 4)))
-    (setq i (1+ i))
+  (defun safe-distance (l)
+    (setq idx 1)
+    (setq len (length l))
+    (setq ok t)
+    (while (and ok (< idx len))
+      (let ((d (distance (nth idx l) (nth (1- idx) l))))
+	(setq ok (and (> d 0) (< d 4)))
+	(setq idx (1+ idx))
+	)
+      )
+    ok
     )
-  )
-ok
 #+end_src
 
 ** 2A
@@ -83,8 +77,8 @@ ok
 Read file into buffer
 
 #+begin_src emacs-lisp  :tangle yes :comments both
-  (defun 2a ()
-    (find-file "input.txt")
+  ;; (defun 2a ()
+  ;;   (find-file "input.txt")
 #+end_src
 
 - Get the lines
