@@ -76,13 +76,15 @@ like
 
 #+begin_src emacs-lisp :tangle yes :comments both
   (defun safe-distance (l)
-    (setq idx 1)
-    (setq len (length l))
     (setq ok t)
-    (while (and ok (< idx len))
-      (let ((d (distance (nth idx l) (nth (1- idx) l))))
-	(setq ok (and (> d 0) (< d 4)))
-	(setq idx (1+ idx))
+    (let ((idx 1)
+	  (len (length l))
+	  )
+      (while (and ok (< idx len))
+	(let ((d (distance (nth idx l) (nth (1- idx) l))))
+	  (setq ok (and (> d 0) (< d 4)))
+	  (setq idx (1+ idx))
+	  )
 	)
       )
     ok
@@ -139,5 +141,71 @@ Need to do something with dolist and mapcar #'string-to-numbers.
 *** End of 2A
 
 #+begin_src emacs-lisp  :tangle yes :comments both
+  )
+#+end_src
+
+* 2B
+
+The Problem Dampener is a reactor-mounted module that lets the reactor
+safety systems tolerate a single bad level in what would otherwise be
+a safe report. It's like the bad level never happened!
+
+Now, the same rules apply as before, except if removing a single level
+from an unsafe report would make it safe, the report instead counts as
+safe.
+
+Update your analysis by handling situations where the Problem Dampener
+can remove a single level from unsafe reports. How many reports are
+now safe?
+
+** Idea
+
+For unsafe reports, walk through the list, removing an item at a time
+until either you get a safe report or you've tried all items. Kind of
+like
+
+#+begin_example
+set index 0
+while not safe and index < (length (list)
+    create list without the element at this index
+    test for safety with original safe algorithm
+    increment index
+#+end_example
+
+This could be implemented as a separate dampener function.
+
+** Dampener
+
+To create a list from the original list but without an element at a
+particular position, we can use seq-remove-at-position.
+
+#+begin_src emacs-lisp  :tangle yes :comments both
+(defun dampened-safe (l)
+  (setq safety (safe l))
+  (let ((idx 0)
+	(len (safe-length l))
+	)
+    (while (and
+	    (not safety)
+	    (< idx len)
+	    )
+      (setq candlist (seq-remove-at-position l idx))
+      (setq safety (safe candlist))
+      (setq idx (1+ idx))
+      )
+    )
+    safety
+  )
+#+end_src
+
+** 2B function
+
+2b should be like 2a but call dampened-safe instead of safe. Have 2b
+run 2a to set up lists and then use seq-count with dampened-safe.
+
+#+begin_src emacs-lisp  :tangle yes :comments both
+(defun 2b ()
+  (2a)
+  (seq-count #'dampened-safe lists)
   )
 #+end_src
