@@ -39,3 +39,33 @@ Of course, keep a total count.
 One idea for horizontal is to how how-many to count occurrences of
 XMAS and SAMX. One could do the SAMX trick for all directions, and
 forget about using reverse!
+
+For vertical and diagonal searches, I don't know if it will be more
+efficient to build a list of strings for each, and use regexp search
+on those strings, or just search directly by accessing the individual
+characters. I /think/ it is more straightforward and reliable to just
+create the strings and search them.
+
+** Horizontal
+
+Create list strings from buffer string using string-lines and search them
+for XMAS and SAMX.
+
+** Vertical
+
+Get horizontal line length from first string in the horizontal strings
+list.
+
+For each index from 0 to length of line - 1, grab the index'th
+character from each line to create a vertical line. The grid looks to
+be 140 × 140, so as a check, we should have 140 verticals lines of 140
+characters each.
+
+Once created, search for XMAS and SAMX in each string.
+
+** Diagonals
+
+We should get 279 lines each from the NE-SW and NW-SE diagonals. A few
+of the lines will be too short to hold XMAS or SAMX.
+
+Then search for XMAS and SAMX in each string.
