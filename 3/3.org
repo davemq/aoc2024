@@ -7,64 +7,43 @@ A mul instruction is mul(X,Y), where X and Y are 1-3 digit numbers.
 
 Spaces between mul, (, X, Y, ) are not valid.
 
-Key to this will be regular expressions for X and Y. We need a regular
-expression that finds 1, 2 or 3 digit numbers. The regular expression
-should be
-
-#+begin_example
-"mul([[:digit:]]\{1,3\}[[:digit:]]\{1,3\})"
-#+end_example
-
-To find this regular expression, loop through the buffer text until we
-hit the end of the string.
-
-Using "rx" I get
-
-#+begin_example
-"mul([[:digit:]]\\{1,3\\},[[:digit:]]\\{1,3\\})"
-#+end_example
-
-Properly escaped. I may just use rx to get this, rather than try to
-figure out the proper escaping.
-
-#+begin_src emacs-lisp :tangle yes :comments both
-(setq re (rx "mul("
-	     (repeat 1 3 (in digit))
-	     ","
-	     (repeat 1 3 (in digit))
-	     ")"
-	     )
-      )
-#+end_src
-
-What I really need out of this is the list of pairs of (X,Y) from the valid
-mul instructions. Or the list of products of X*Y from each valid mul
-instruction encountered.
-
-To get X and Y we need to modify the regular expression a bit more, to
-create the groups, which will then be available in the match data when
-we call string-match.
-
-#+begin_src emacs-lisp :tangle yes :comments both
-(setq re (rx "mul("
-	     (group
-	      (repeat 1 3 (in digit))
-	      )
-	     ","
-	     (group
-	      (repeat 1 3 (in digit))
-	      )
-	     ")"
-	     )
-      )
-#+end_src
-
-This gives us the string
-
-#+begin_example
-"mul(\\([[:digit:]]\\{1,3\\}\\),\\([[:digit:]]\\{1,3\\}\\))"
-#+end_example
-
 We can use match-string to get group 1 for X and group 2 for Y. Then
 convert those strings to numbers. I suppose at that point, multiply
 them and add them to an accumulator!
+
+** Function
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (defun 3a ()
+    (find-file "input.txt")
+    (setq str (buffer-string))
+    (setq re (rx "mul("
+		 (group
+		  (repeat 1 3 (in digit))
+		  )
+		 ","
+		 (group
+		  (repeat 1 3 (in digit))
+		  )
+		 ")"
+		 )
+	  )
+    (setq offset 0)
+    (setq total 0)
+
+    (while (string-match re str offset)
+      (setq m (match-data))
+      ;; 0th element is start of full match
+      ;; 1st element is end of full match
+      ;; 2nd element is start of first group
+      ;; 3rd element is end of first group
+      ;; 4th element is start of secon group
+      ;; 5th element is end of second group
+      (setq offset (cadr m))
+      (setq total (+ total
+		     (* (string-to-number (substring str (nth 2 m) (nth 3 m)))
+			(string-to-number (substring str (nth 4 m) (nth 5 m))))))
+      )
+    total
+    )
+#+end_src
