@@ -1,0 +1,37 @@
+This word search allows words to be horizontal, vertical, diagonal,
+written backwards, or even overlapping other words. It's a little
+unusual, though, as you don't merely need to find one instance of
+XMAS - you need to find all of them.
+
+Take a look at the little Elf's word search. How many times does XMAS
+appear?
+
+** Idea
+
+So the search will have to go 8 directions:
+- left to right
+- right to left
+- top to bottom
+- bottom to top
+- diagonal NE to SW
+- diagonal SW to NE
+- diagonal NW to SE
+- diagonal SE to NW
+
+And of course, every row, column and diagonal in each direction. Phew!
+
+String search from left to right should be relatively easy, just use
+normal string searching on each line.
+
+If you search within the buffer, rather than the buffer string, you
+can use search-forward and search-backward. Regular expression
+searching can search strings. So we can slice and dice the buffer
+string a few ways, use reverse to get strings to search backwards. It
+will probably be easier to do all directions this way:
+
+- Cut up (buffer-string) the appropriate way into a list of
+  strings. Horizontal lines are the easiest.
+- Search the strings forwards.
+- Search the (reverse string), i.e. search backwards.
+
+Of course, keep a total count.
