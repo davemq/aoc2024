@@ -18,16 +18,16 @@ them and add them to an accumulator!
     (find-file "input.txt")
     (setq str (buffer-string))
     (setq re (rx "mul("
-		 (group
-		  (repeat 1 3 (in digit))
-		  )
-		 ","
-		 (group
-		  (repeat 1 3 (in digit))
-		  )
-		 ")"
-		 )
-	  )
+		   (group
+		    (repeat 1 3 (in digit))
+		    )
+		   ","
+		   (group
+		    (repeat 1 3 (in digit))
+		    )
+		   ")"
+		   )
+	    )
     (setq offset 0)
     (setq total 0)
 
@@ -41,8 +41,69 @@ them and add them to an accumulator!
       ;; 5th element is end of second group
       (setq offset (cadr m))
       (setq total (+ total
-		     (* (string-to-number (substring str (nth 2 m) (nth 3 m)))
-			(string-to-number (substring str (nth 4 m) (nth 5 m))))))
+		       (* (string-to-number (substring str (nth 2 m) (nth 3 m)))
+			  (string-to-number (substring str (nth 4 m) (nth 5 m))))))
+      )
+    total
+    )
+#+end_src
+
+* 3B
+
+There are two new instructions you'll need to handle:
+
+- The do() instruction enables future mul instructions.  
+- The don't() instruction disables future mul instructions.  
+
+Only the most recent do() or don't() instruction applies. At the
+beginning of the program, mul instructions are enabled.
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (defun 3b ()
+    (find-file "input.txt")
+    (setq str (buffer-string))
+    (setq re (rx (or
+		  (seq "mul("
+		   (group
+		    (repeat 1 3 (in digit))
+		    )
+		   ","
+		   (group
+		    (repeat 1 3 (in digit))
+		    )
+		   ")"
+		   )
+		  (seq "don't()")
+		  )
+		 )
+	  )
+    (setq do (rx "do()"))
+    (setq offset 0)
+    (setq total 0)
+    (setq enabled t)
+
+    (while (and enabled (string-match re str offset))
+      (setq m (match-data))
+      (setq offset (cadr m))
+      (cond ((= (length m) 6)
+	     (setq total (+ total
+			      (* (string-to-number (substring str (nth 2 m) (nth 3 m)))
+				 (string-to-number (substring str (nth 4 m) (nth 5 m)))
+				 )
+			      )
+		     )
+	       )
+	    ((= (length m) 2) (setq enabled nil))
+	    )
+      (if (not enabled)
+	  (if (string-match do str offset)
+	      (progn
+		(setq m (match-data))
+		(setq offset (cadr m))
+		(setq enabled t)
+		)
+	    )
+	)
       )
     total
     )
