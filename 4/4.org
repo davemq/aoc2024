@@ -35,3 +35,7 @@ will probably be easier to do all directions this way:
 - Search the (reverse string), i.e. search backwards.
 
 Of course, keep a total count.
+
+One idea for horizontal is to how how-many to count occurrences of
+XMAS and SAMX. One could do the SAMX trick for all directions, and
+forget about using reverse!
