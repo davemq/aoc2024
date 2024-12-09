@@ -46,14 +46,14 @@ on those strings, or just search directly by accessing the individual
 characters. I /think/ it is more straightforward and reliable to just
 create the strings and search them.
 
-** Horizontal
+*** Horizontal
 
 Create line strings from buffer string using string-lines and search them
 for XMAS and SAMX.
 
 Maybe skip creating lines and just search thought the buffer string.
 
-** Vertical
+*** Vertical
 
 Get horizontal line length from first string in the horizontal strings
 list.
@@ -65,9 +65,60 @@ characters each.
 
 Once created, search for XMAS and SAMX in each string.
 
-** Diagonals
+*** Diagonals
 
 We should get 279 lines each from the NE-SW and NW-SE diagonals. A few
 of the lines will be too short to hold XMAS or SAMX.
 
 Then search for XMAS and SAMX in each string.
+
+* 4a function
+
+#+begin_src emacs-lisp :tangle yes :comments both
+(defun 4a ()
+  (find-file "input.txt")
+  (setq str (buffer-string))
+  (setq xmas (rx "XMAS"))
+  (setq samx (rx "SAMX"))
+  (setq total 0)
+  (setq offset 0)
+#+end_src
+
+** Horizontal
+*** Search forwards
+
+Just loop over str for "XMAS", calling string-match until it returns
+nil.
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (setq offset 0)
+  (while (string-match xmas str offset)
+    (setq offset (cadr (match-data)))
+    (setq total (1+ total))
+    )
+#+end_src
+
+*** Search backwards
+
+Loop over str for "SAMX".
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (setq offset 0)
+  (while (string-match samx str offset)
+    (setq offset (cadr (match-data)))
+    (setq total (1+ total))
+    )
+#+end_src
+
+** Vertical
+
+** NE-SW diagonal
+
+** NW-SE diagonal
+
+** End
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  total
+  )
+#+end_src
