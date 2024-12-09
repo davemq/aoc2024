@@ -112,6 +112,18 @@ Loop over str for "SAMX".
 
 ** Vertical
 
+Strings made up of a single character of each line can be created with
+something like this:
+
+#+begin_src emacs-lisp :tangle no
+(mapconcat (lambda (l) (substring l 0 1)) lines)
+#+end_src
+
+The indices for the substring will then have to run from 0 to the
+length of the strings minus one, which happens to be 140 - 1 = 139.
+Could also then search each string for XMAS and SAMX just after
+they're created, adding to the totals.
+
 ** NE-SW diagonal
 
 ** NW-SE diagonal
