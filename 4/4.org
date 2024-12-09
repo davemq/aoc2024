@@ -48,8 +48,10 @@ create the strings and search them.
 
 ** Horizontal
 
-Create list strings from buffer string using string-lines and search them
+Create line strings from buffer string using string-lines and search them
 for XMAS and SAMX.
+
+Maybe skip creating lines and just search thought the buffer string.
 
 ** Vertical
 
