@@ -150,7 +150,7 @@ they're created, adding to the totals.
     )
 #+end_src
 
-** NE-SW diagonal
+** NW-SE diagonal
 
 We want to create strings from the lines from the buffer, starting
 with 
@@ -172,7 +172,7 @@ Then march down the first line:
   down to
 - (0, 139)
 
-** NW-SE diagonal
+** NE-SW diagonal
 
 ** End
 
