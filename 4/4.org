@@ -75,13 +75,13 @@ Then search for XMAS and SAMX in each string.
 * 4a function
 
 #+begin_src emacs-lisp :tangle yes :comments both
-(defun 4a ()
-  (find-file "input.txt")
-  (setq str (buffer-string))
-  (setq xmas (rx "XMAS"))
-  (setq samx (rx "SAMX"))
-  (setq total 0)
-  (setq offset 0)
+  (defun 4a ()
+    (find-file "input.txt")
+    (setq str (buffer-string))
+    (setq xmas (rx "XMAS"))
+    (setq samx (rx "SAMX"))
+    (setq total 0)
+    (setq offset 0)
 #+end_src
 
 ** Horizontal
@@ -123,6 +123,32 @@ The indices for the substring will then have to run from 0 to the
 length of the strings minus one, which happens to be 140 - 1 = 139.
 Could also then search each string for XMAS and SAMX just after
 they're created, adding to the totals.
+
+*** Create lines
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (setq lines (string-lines str))
+#+end_src
+
+*** Create vertical lines and search
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (setq i 0)
+  (setq len (length (car lines)))
+  (while (< i len)
+    (setq v (mapconcat (lambda (l) (substring l i (1+ i))) lines))
+    (setq offset 0)
+    (while (string-match xmas v offset)
+      (setq offset (cadr (match-data)))
+      (setq total (1+ total)))
+    (setq offset 0)
+    (while (string-match samx v offset)
+      (setq offset (cadr (match-data)))
+      (setq total (1+ total))
+      )
+    (setq i (1+ i))
+    )
+#+end_src
 
 ** NE-SW diagonal
 
