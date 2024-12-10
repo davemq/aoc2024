@@ -172,6 +172,35 @@ Then march down the first line:
   down to
 - (0, 139)
 
+
+*** Code for NW-SE
+
+#+begin_src emacs-lisp :tangle yes :comments both
+(setq rows (length lines))
+(setq startrow (1- (length lines)))
+(while (<= 0 startrow)
+  (setq diagonal "")
+  (setq r startrow)
+  (setq col 0)
+  (while (< startrow rows)
+    (setq diagonal (concat diagonal (substring (nth r lines) col (1+ col))))
+    (setq r (1+ r))
+    (setq col (1+ col))
+    )
+  ;; now diagonal should contain a string from the NW-SE diagonal
+  (setq offset 0)
+  (while (string-match xmas diagonal offset)
+    (setq offset (cadr (match-data)))
+    (setq total (1+ total)))
+  (setq offset 0)
+  (while (string-match samx diagonal offset)
+    (setq offset (cadr (match-data)))
+    (setq total (1+ total)))
+
+  (setq startrow (1+ startrow))
+  )
+#+end_src
+
 ** NE-SW diagonal
 
 ** End
