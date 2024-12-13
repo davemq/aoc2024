@@ -84,6 +84,12 @@ Then search for XMAS and SAMX in each string.
     (setq offset 0)
 #+end_src
 
+** Create lines
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (setq lines (string-lines str))
+#+end_src
+
 ** Horizontal
 *** Search forwards
 
@@ -123,12 +129,6 @@ The indices for the substring will then have to run from 0 to the
 length of the strings minus one, which happens to be 140 - 1 = 139.
 Could also then search each string for XMAS and SAMX just after
 they're created, adding to the totals.
-
-*** Create lines
-
-#+begin_src emacs-lisp :tangle yes :comments both
-  (setq lines (string-lines str))
-#+end_src
 
 *** Create vertical lines and search
 
@@ -203,9 +203,102 @@ Then march down the first line:
 
 *** Code for NW-SE, part 2
 
-This part starts at (0,0), moving across row 0.
+This part starts at (0,0), moving across row 0 starting at (0,0), then
+starting at (0, 1), etc.
+
+#+begin_src emacs-lisp :tangle yes :comments both
+(setq cols (length (cadr lines)))
+(setq startcol 0)
+(while (< startcol cols)
+  (setq row 0)
+  (setq col startcol)
+  (setq diagonal "")
+  (while (< col cols)
+    (setq diagonal (concat diagonal (substring (nth row lines) col (1+ col))))
+    (setq row (1+ row))
+    (setq col (1+ col))
+    )
+  (setq offset 0)
+  (while (string-match xmas diagonal offset)
+    (setq offset (cadr (match-data)))
+    (setq total (1+ total))
+    )
+  (setq offset 0)
+  (while (string-match samx diagonal offset)
+    (setq offset (cadr (match-data)))
+    (setq total (1+ total))
+    )
+  (setq startcol (1+ startcol))
+  )
+#+end_src
+
 
 ** NE-SW diagonal
+
+*** Part 1
+
+Here start out the opposite of NW-SE, sweeping across row 0, starting
+from columns 0 to 139, adding 1 to row and subtracting 1 from the
+column. So in this case stop when col reaches 0.
+
+#+begin_src emacs-lisp :tangle yes :comments both
+(setq rows (length lines))
+(setq cols (length (car lines)))
+(setq startcol 0)
+(while (< startcol cols)
+  (setq diagonal "")
+  (setq col startcol)
+  (setq row 0)
+  (while (>= col 0)
+    (print (format "%d,%d" row col))
+    (setq diagonal (concat diagonal (substring (nth row lines) col (1+ col))))
+    (setq col (1- col))
+    (setq row (1+ row))
+    )
+  (print "")
+  (setq offset 0)
+  (while (string-match xmas diagonal offset)
+    (setq offset (cadr (match-data)))
+    (setq total (1+ total))
+    )
+  (setq offset 0)
+  (while (string-match samx diagonal offset)
+    (setq offset (cadr (match-data)))
+    (setq total (1+ total))
+    )
+  (setq startcol (1+ startcol))
+  )
+#+end_src
+
+*** Part 2
+
+Now walk down the rows, from row 1 to 139, column 139 to 0
+
+#+begin_src emacs-lisp :tangle yes :comments both
+(setq startrow 1)
+(while (< startrow rows)
+  (setq row startrow)
+  (setq col (1- cols))
+  (setq diagonal "")
+  (while (< row rows)
+    (setq diagonal (concat diagonal (substring (nth row lines) col (1+ col))))
+    (setq row (1+ row))
+    (setq col (1- col))
+    )
+  (setq offset 0)
+  (while (string-match xmas diagonal offset)
+    (setq offset (cadr (match-data)))
+    (setq total (1+ total))
+    )
+  (setq offset 0)
+  (while (string-match samx diagonal offset)
+    (setq offset (cadr (match-data)))
+    (setq total (1+ total))
+    )
+  (setq startrow (1+ startrow))
+  )
+#+end_src
+
 
 ** End
 
