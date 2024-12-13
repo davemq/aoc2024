@@ -1,3 +1,5 @@
+* 4a
+
 This word search allows words to be horizontal, vertical, diagonal,
 written backwards, or even overlapping other words. It's a little
 unusual, though, as you don't merely need to find one instance of
@@ -305,4 +307,189 @@ Now walk down the rows, from row 1 to 139, column 139 to 0
 #+begin_src emacs-lisp :tangle yes :comments both
   total
   )
+#+end_src
+
+* 4b
+
+We're searching for X-MAS instead, in which you're supposed to find
+two MAS in the shape of an X, like this:
+
+#+begin_example
+M.S
+.A.
+M.S
+#+end_example
+
+Another example is
+
+#+begin_example
+.M.S......
+..A..MSMS.
+.M.S.MAA..
+..A.ASMSM.
+.M.S.M....
+..........
+S.S.S.S.S.
+.A.A.A.A..
+M.M.M.M.M.
+..........
+#+end_example
+
+which has 9 X-MASes.
+
+** Thoughts and ideas
+
+The way I did 4a doesn't easily lend itself to this exercise. I'd
+really like a 2d array of the characters of the strings. The diagonal
+strings are helpful, and certainly walking through the strings is
+helpful.
+
+But I'm thinking another way might be to use regular expressions
+across three consecutive strings. It's a little tricky. So I could do
+something like these regular expressions on substrings from the same
+starting starting locations in each string:
+
+- "\([MS]\).\([MS]\)
+- .A.
+- This one is tricky.
+  - If \2 from the first string is M, use S for our first letter,
+    otherwise use M.
+  - If \1 from the first string is M, use S for our second letter,
+    otherwise use M.
+
+Or, I could spell out all the valid combos:
+- M.M
+  .A.
+  S.S
+- M.S
+  .A.
+  M.S
+- S.M
+  .A.
+  S.M
+- S.S
+  .A.
+  M.M
+
+This latter idea is very brute force, and require more searches. I
+think I prefer the first idea, as it requires fewer searches.
+
+** Code for 4b
+
+*** Front matter
+
+#+begin_src emacs-lisp :tangle yes :comments both
+(defun 4b ()
+  (find-file "input.txt")
+  (setq str (buffer-string))
+  (setq lines (string-lines str))
+  (setq len (length lines))
+  (setq total 0)
+  (setq first-re
+	(rx
+	 (group
+	  (any "MS")
+	  )
+	 anything
+	 (group
+	  (any "MS")
+	  )
+	 )
+	)
+  (setq second-re (rx bol
+		      anything
+		      "A" 
+		      anything
+		      )
+	)
+#+end_src
+
+*** Walk through lines
+
+set first to line 0
+set second to line 1
+set third to line 2
+While first line runs from 0 to len - 2
+do
+    while search for first-re matches
+    do
+        pull out position of start of match
+        pull out match data for new offset
+	pull out group 1 string
+	pull out group 2 string
+
+	search second for second-re at same position as start of match
+	if a match
+	do
+	    construct third-re from 
+	    - opposite for group 2 string
+	    - anything
+	    - opposite for group 1 string
+
+	    search for third-re at start of first match position
+	    if a match
+	    do
+	        increment total
+	    done
+	done
+    done
+
+    increment first line counter
+    set first line to second line
+    set second line to third line
+    get new third line from position first line+2
+done
+
+#+begin_src emacs-lisp :tangle yes :comments both
+(setq firstlineno 0)
+(setq first (nth firstlineno lines))
+(setq second (nth (1+ firstlineno) lines))
+(setq third (nth (+ 2 firstlineno) lines))
+
+(while (< firstlineno (- len 2))
+  (setq offset 0)
+  (while (string-match first-re first offset)
+    (setq m (match-data))
+    (setq pos (car m))
+    (setq offset (cadr m))
+    (setq g1 (match-string 1 first))
+    (setq g2 (match-string 2 first))
+
+    (if (string-match second-re second pos)
+	;;; now construct third-re
+	(progn
+	  (setq third-re (rx
+			  bol
+			  (regexp 
+			   (if (string-equal g2 "M") 
+			       "S"
+			     "M")
+			   )
+			  anything
+			  (regexp 
+			   (if (string-equal g1 "M")
+			       "S"
+			     "M")
+			   )
+			  )
+		)
+	  (if (string-match third-re third pos)
+	      (setq total (1+ total))
+	    )
+	  )
+      )
+    )
+
+  (setq firstlineno (1+ firstlineno))
+  (setq first second)
+  (setq second third)
+  (setq third (nth (+ firstlineno 2) lines))
+  )
+#+end_src
+
+*** Return total
+
+#+begin_src emacs-lisp :tangle yes :comments both
+total
+)
 #+end_src
