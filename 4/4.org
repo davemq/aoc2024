@@ -396,8 +396,7 @@ think I prefer the first idea, as it requires fewer searches.
 	  )
 	 )
 	)
-  (setq second-re (rx bol
-		      anything
+  (setq second-re (rx anything
 		      "A" 
 		      anything
 		      )
@@ -414,12 +413,12 @@ do
     while search for first-re matches
     do
         pull out position of start of match
-        pull out match data for new offset
 	pull out group 1 string
 	pull out group 2 string
+	increment offset
 
 	search second for second-re at same position as start of match
-	if a match
+	if a match and pos matches first-pos
 	do
 	    construct third-re from 
 	    - opposite for group 2 string
@@ -427,7 +426,7 @@ do
 	    - opposite for group 1 string
 
 	    search for third-re at start of first match position
-	    if a match
+	    if a match and post matches first-pos
 	    do
 	        increment total
 	    done
@@ -441,50 +440,52 @@ do
 done
 
 #+begin_src emacs-lisp :tangle yes :comments both
-(setq firstlineno 0)
-(setq first (nth firstlineno lines))
-(setq second (nth (1+ firstlineno) lines))
-(setq third (nth (+ 2 firstlineno) lines))
+  (setq firstlineno 0)
+  (setq first (nth firstlineno lines))
+  (setq second (nth (1+ firstlineno) lines))
+  (setq third (nth (+ 2 firstlineno) lines))
 
-(while (< firstlineno (- len 2))
-  (setq offset 0)
-  (while (string-match first-re first offset)
-    (setq m (match-data))
-    (setq pos (car m))
-    (setq offset (cadr m))
-    (setq g1 (match-string 1 first))
-    (setq g2 (match-string 2 first))
+  (while (< firstlineno (- len 2))
+    (setq offset 0)
+    (while (string-match first-re first offset)
+      (setq m (match-data))
+      (setq pos (car m))
+      (setq offset (1+ pos))
+      (setq g1 (match-string 1 first))
+      (setq g2 (match-string 2 first))
 
-    (if (string-match second-re second pos)
-	;;; now construct third-re
-	(progn
-	  (setq third-re (rx
-			  bol
-			  (regexp 
-			   (if (string-equal g2 "M") 
-			       "S"
-			     "M")
-			   )
-			  anything
-			  (regexp 
-			   (if (string-equal g1 "M")
-			       "S"
-			     "M")
-			   )
-			  )
-		)
-	  (if (string-match third-re third pos)
-	      (setq total (1+ total))
-	    )
-	  )
+      (if (and (string-match second-re second pos)
+  	     (eql pos (car (match-data))))
+  	(progn
+        
+  	;;; now construct third-re
+  	  (setq third-re (rx
+  			  (regexp 
+  			   (if (string-equal g2 "M") 
+  			       "S"
+  			     "M")
+  			   )
+  			  anything
+  			  (regexp 
+  			   (if (string-equal g1 "M")
+  			       "S"
+  			     "M")
+  			   )
+  			  )
+  		)
+  	  (if (and (string-match third-re third pos)
+  		   (eql pos (car (match-data))))
+  	      (setq total (1+ total))
+  	    )
+  	  )
+        )
       )
-    )
 
-  (setq firstlineno (1+ firstlineno))
-  (setq first second)
-  (setq second third)
-  (setq third (nth (+ firstlineno 2) lines))
-  )
+    (setq firstlineno (1+ firstlineno))
+    (setq first second)
+    (setq second third)
+    (setq third (nth (+ firstlineno 2) lines))
+    )
 #+end_src
 
 *** Return total
