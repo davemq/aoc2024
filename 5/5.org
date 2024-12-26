@@ -71,3 +71,68 @@ element is /not/ after the next element.
 For those lists where the conditions are satisfied, find the middle
 element and add it to the total.
 
+** Code
+
+*** Start function and read file
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (defun 5a ()
+    (find-file "input.txt")
+    (setq str (buffer-string))
+#+end_src
+
+*** Parse page ordering rules
+
+First, create a regexp for the pageorder, which is
+
+page|page
+
+where page is 2 digits in each case. We /could/ make this even more
+tight by noticing that the digits are really only [1-9], but this
+works.
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (setq pageorder
+        (rx
+         (group 
+  	(repeat 2 (in digit))
+  	)
+         "|"
+         (group
+  	(repeat 2 (in digit))
+  	)
+         )
+        )
+#+end_src
+
+Set the string match offset to 0 and create an empty property list
+"p".
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (setq offset 0)
+  (setq p (list))
+#+end_src
+
+Finally, loop through the first section until we stop getting matches,
+and put the information into the property list.
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (while
+      (string-match pageorder str offset)
+    (setq m (match-data))
+    (setq offset (nth 1 m))
+    (setq first (string-to-number (match-string 1 str)))
+    (setq second (string-to-number (match-string 2 str)))
+    (setq p1 (plist-get p first))
+    (if (not p1)
+        (setq p1 (list)))
+    (push second p1)
+    (setq p (plist-put p first p1))
+    )
+#+end_src
+
+*** End function
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  )
+#+end_src
