@@ -131,6 +131,24 @@ and put the information into the property list.
     )
 #+end_src
 
+*** Page list processing
+
+For the next part, we can either do steps for all of the page lists,
+i.e. parse them all, check them all, find the middle element for all
+valid one, sum them up.
+
+Alternatively, for each line, we could
+- parse
+- if valid
+  - find middle element
+  - add to sum
+
+Parsing is pretty easy.
+- get the second part of the file with (substring str (1+ offset))
+- split into lines
+- for each line split into a list with "," as the separator
+
+
 *** End function
 
 #+begin_src emacs-lisp :tangle yes :comments both
