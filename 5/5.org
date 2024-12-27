@@ -76,7 +76,9 @@ element and add it to the total.
 *** Start function and read file
 
 #+begin_src emacs-lisp :tangle yes :comments both
+  (require 'cl-lib)
   (defun 5a ()
+    "Day 5, part 1."
     (find-file "input.txt")
     (setq str (buffer-string))
 #+end_src
@@ -148,9 +150,71 @@ Parsing is pretty easy.
 - split into lines
 - for each line split into a list with "," as the separator
 
+#+begin_src emacs-lisp :tangle yes :comments both
+  (setq lines (string-lines (substring str (+ 2 offset))))
+  (setq lists (mapcar (lambda (l) (split-string l ",")) lines))
+  (defun s2n (l)
+    "Map a list of strings to a list of numbers."
+    (mapcar #'string-to-number l))
+  (setq lists (mapcar #'s2n lists))
+#+end_src
+
+For each list item
+- get reverse of item
+- check for presense of each member of (cdr (reverse item)) in the
+  property list for (car (reverse item))
+- if length of (cdr (reverse item)) > 1
+  - run checks again with list as (cdr (reverse item)), i.e. recurse
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (defun valid (l)
+    "Determine whether page order list is valid."
+    (let ((pl (plist-get p (car l)))
+  	(result t))
+      (dolist (item (cdr l) result)
+        (setq result (and result (not (memq item pl)))))
+      (if (and result
+  	     (> (length (cdr l)) 1)
+  	     )
+  	(setq result (valid (cdr l)))
+        )
+      result
+      )
+    )
+#+end_src
+
+For the middle, we assume the length of the page order is odd.
+Use (signal 'wrong-number-of-arguments list) to signal a bad
+assumption.
+
+Remember elements of a list start at 0. So the middle of a 3 element
+list is position 1, the middle of a 5 element list, position 2, etc.
+
+Otherwise, the length of the page order list is odd, so middle is
+(/ (1- (length (page order list))) 2)
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (defun middle (l)
+    "Compute middle element of list."
+    (setq len (length l))
+    (if (cl-evenp len)
+        (signal 'wrong-number-of-arguments l))
+    (/ (1- len) 2)
+    )
+#+end_src
+
+Add up the middle page numbers from valid page order lists.
+
+#+begin_src emacs-lisp :tangle yes :comments both
+  (setq sum 0)
+  (dolist (l lists sum)
+    (if (valid (reverse l))
+        (setq sum (+ sum (nth (middle l) l)))))
+#+end_src
 
 *** End function
 
 #+begin_src emacs-lisp :tangle yes :comments both
+  sum
   )
 #+end_src
