@@ -226,9 +226,9 @@ rules to put the page numbers in the right order. For the above
 example, here are the three incorrectly-ordered updates and their
 correct orderings:
 
-75,97,47,61,53 becomes 97,75,47,61,53.
-61,13,29 becomes 61,29,13.
-97,13,75,29,47 becomes 97,75,47,29,13.
+75,97,47,61,53 becomes 97,75, *47*, 61,53.
+61,13,29 becomes 61, *29*, 13.
+97,13,75,29,47 becomes 97,75, *47*, 29,13.
 
 After taking only the incorrectly-ordered updates and ordering them
 correctly, their middle page numbers are 47, 29, and 47. Adding these
@@ -237,3 +237,37 @@ together produces 123.
 Find the updates which are not in the correct order. What do you get
 if you add up the middle page numbers after correctly ordering just
 those updates?
+
+** Ideas
+
+1. Identify the not valid, or invalid, page lists.
+2. For those invalid page lists, re-sort them.
+3. Find middle element
+4. Add to sum
+
+
+We already have code to discover valid page lists, invalid lists are
+those where valid() returns nil.
+
+For sorting lists, valid() already kind of gets us there in
+identifying that /some/ list element is out or order. It works by
+searching for elements of the list that are said to be /before/ the
+first element of the list, but are in the first element's property
+list, indicating they should be /after/.
+
+I'm thinking about a function that moves the offending item out of its
+current position and puts it at the end of the list, and returns the
+list. I think this can be done with something like
+
+#+begin_src emacs-lisp :tangle no
+  (setq foo 72)				;offending element
+  (setq l (nconc (delq foo l) (list foo)))
+#+end_src
+
+The contents of l will be modified directly, but if, in the case
+above, 72 is the first element, l should end up pointing to (cdr l)
+and (car l) appended to tne end.
+
+I don't know how well this will work with sub-lists. I'll have to
+see. I /think/ modifying the sublists will work fine, but this needs
+testing.
